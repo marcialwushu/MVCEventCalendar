@@ -70,7 +70,7 @@
                     eventColor: '#378006',
                     events: events,
                     eventClick: function (calEvent, jsEvent, view) {
-                        $('#myModel #eventTitle').text(calEvent.title);
+                        $('#myModal #eventTitle').text(calEvent.title);
                         var $description = $('<div/>');
                         $description.append($('<p/>').html('<b>Start: </b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
                         if (calEvent.end != null) {
