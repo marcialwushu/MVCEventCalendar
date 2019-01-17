@@ -13,5 +13,14 @@ namespace MVCEventCalendar.Controllers
         {
             return View();
         }
+
+        public JsonResult GetEvents()
+        {
+            using (MyDatabaseEntities dc = new MyDatabaseEntities())
+            {
+                var events = dc.Events.ToList();
+                return new JsonResult { Data = events, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
     }
 }
