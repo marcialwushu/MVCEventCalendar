@@ -18,8 +18,9 @@ namespace MVCEventCalendar.Controllers
             return View();
         }
 
-        
-        
+
+
+        /// <summary>GetEvents : Buscar informação do evento</summary>
         public JsonResult GetEvents()
         {
             using (MyDatabaseEntities dc = new MyDatabaseEntities())
