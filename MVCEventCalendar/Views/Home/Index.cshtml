@@ -14,6 +14,12 @@
                 <h4 class="modal-title"><span id="eventTitle"></span></h4>
             </div>
             <div class="modal-body">
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span> Remove
+                </button>
+                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                </button>
                 <p id="pDetails"></p>
             </div>
             <div class="modal-footer">
@@ -33,29 +39,42 @@
     <script>
         $(document).ready(function () {
             var events = [];
-            $.ajax({
-                type: "GET",
-                url: "/home/GetEvents",
-                success: function (data) {
-                    $.each(data, function (i, v) {
-                        events.push({
-                            title: v.Subject,
-                            description: v.Description,
-                            start: moment(v.Start),
-                            end: v.End != null ? moment(v.End) : null,
-                            color: v.ThemeColor,
-                            allDay: v.IsFullDay
-                        });
-                    })
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/home/GetEvents",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                title: v.Subject,
+                                description: v.Description,
+                                start: moment(v.Start),
+                                end: v.End != null ? moment(v.End) : null,
+                                color: v.ThemeColor,
+                                allDay: v.IsFullDay
+                            });
+                        })
 
-                    GenerateCalendar(events);
-                },
-                error: function (error) {
-                    alert('failed');
-                }
-            })
+                        GenerateCalendar(events);
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+            
 
             function GenerateCalendar(events) {
+
+                /// <summary>
+                /// Generates the calendar.
+                /// </summary>
+                /// <param name="events">The events.</param>
+                /// <returns></returns>
                 $('#calendar').fullCalendar('destroy');
                 $('#calendar').fullCalendar({
                     contentheight: 400,
@@ -70,6 +89,7 @@
                     eventColor: '#378006',
                     events: events,
                     eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
                         $('#myModal #eventTitle').text(calEvent.title);
                         var $description = $('<div/>');
                         $description.append($('<p/>').html('<b>Start: </b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
@@ -83,7 +103,33 @@
                     }
                 })
             }
-            
+
+            $('#btnEdit').click(function () {
+                //Open Modal dialog for edit event
+            })
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/home/DeleteEvent',
+                        success: function (data) {
+                            /// <summary>
+                            /// s the specified data.
+                            /// </summary>
+                            /// <param name="data">The data.</param>
+                            /// <returns></returns>                            
+                            if (data.status) {
+                                //Refresh the calendar
+                                FetchEventAndRenderCalendar();
+                            }
+                        },
+                        error: function () {
+                            alert('Failed');
+                        }
+                    })
+                }
+            })
+
         })
     </script>
 }

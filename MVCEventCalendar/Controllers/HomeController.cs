@@ -38,7 +38,7 @@ namespace MVCEventCalendar.Controllers
             {
                 if (e.EventID > 0)
                 {
-                    //Update the event
+                    ///Update the event
                     var v = dc.Events.Where(a => a.EventID == e.EventID).FirstOrDefault();
                     if (v != null)
                     {
@@ -59,12 +59,21 @@ namespace MVCEventCalendar.Controllers
                 status = true;
             }
 
-            return new JsonResult { Data = new {  status } };
+            return new JsonResult { Data = new {  status = status } };
         }
-        
+
+        /// <summary>Deletes the event.</summary>
+        /// <param name="EventID">The event identifier.</param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult DeleteEvent(int EventID)
         {
+            /// <summary>
+            /// Implements the DeleteEvent method.
+            /// </summary>
+            /// <returns>Memeful Comments</returns>
+            /// <image url="https://media.giphy.com/media/Ca7gy6EZqdH32/giphy.gif" scale="0.3" />
+
             var status = false;
             using (MyDatabaseEntities dc = new MyDatabaseEntities())
             {
