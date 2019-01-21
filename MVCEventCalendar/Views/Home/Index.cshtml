@@ -224,6 +224,61 @@
                 $('#myModalSave').modal();
             }
 
+            $('#btnSave').click(function () {
+                //Validation
+                if ($('#txtSubject').val().trim() == "") {
+                    alert('Subject required');
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Start date required');
+                    return;
+                }
+                if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+                    alert('End date required');
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtStart').val(), "DD/MMM/YYY HH:mm A").toDate();
+                    var endDate = moment($('#txtEnd').val(), "DD/MMM/YYY HH:mm A").toDate();
+                    if (startDate > endDate) {
+                        alert('Invalid end date');
+                        return;
+                    }
+                }
+
+                var data = {
+                    EventID: $('#hdEventID').val(),
+                    Subject: $('#txtSubject').val().trim(),
+                    Start: $('#txtStart').val().trim(),
+                    End: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+                    Description: $('#txtDescription').val(),
+                    ThemeColor: $('#addThemeColor').val()
+                }
+                SaveEvent(data);
+                
+                // call function for submit data on the server
+            })
+
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/home/SaveEvent',
+                    data: data,
+                    success: function (data) {
+                                                  
+                        if (data.status) {
+                            //Refresh the calendar
+                            FetchEventAndRenderCalendar();
+                            $('#myModal').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
         })
     </script>
 }
